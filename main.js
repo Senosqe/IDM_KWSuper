@@ -4,7 +4,7 @@ const { Server } = require('socket.io');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, spawn } = require('child_process');
 const ytdl = require('@distube/ytdl-core');
 const mime = require('mime-types');
 
@@ -121,8 +121,6 @@ async function handleSpecialDownload(url, saveDir) {
             }
 
             io.emit('status', { msg: "Menganalisa video YouTube..." });
-            const { spawn } = require('child_process');
-
             let formatArgs;
             if (downloadMode === 'mp3') {
                 formatArgs = ['-f', 'bestaudio', '-o', path.join(saveDir, '%(title)s.mp3'), url];
@@ -225,8 +223,6 @@ async function handleSpecialDownload(url, saveDir) {
             }
 
             io.emit('status', { msg: "Menganalisa post Instagram..." });
-            const { spawn } = require('child_process');
-
             let finalArgs = ['-f', 'best', '-o', path.join(saveDir, `Instagram_${Date.now()}.%(ext)s`), url];
             let actualFileName = '';
 
