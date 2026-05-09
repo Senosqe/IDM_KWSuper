@@ -1,65 +1,76 @@
-# 🚀 IDM KW Super (Ultimate Edition)
+# IDM KW Super (Ultimate Edition) 🚀
 
-IDM KW Super adalah pengunduh serbaguna super cepat berbasis Node.js dengan antarmuka yang sangat modern (Cyberpunk Theme). Aplikasi ini dilengkapi dengan beberapa jalur *engine* khusus yang dirancang untuk membongkar proteksi dari berbagai situs populer maupun menyedot file dari internet secara *multi-threaded* selayaknya Internet Download Manager (IDM).
+![Banner](https://img.shields.io/badge/IDM--KW--Super-Ultimate--Edition-yellow?style=for-the-badge&logo=rocket)
+![Node.js](https://img.shields.io/badge/Node.js-v20+-green?style=flat-square&logo=node.js)
+![OS](https://img.shields.io/badge/OS-Windows-blue?style=flat-square&logo=windows)
 
----
-
-## 🌟 Fitur Unggulan
-
-1. **🚀 Auto Mode (God Mode)**
-   Mampu menyedot HAMPIR SEMUA jenis file (Aplikasi `.exe`, dokumen, `.zip`, `.pdf`, `.mp4`, `.png`, dll) dari *direct link* manapun. 
-   - Dilengkapi **Content-Type Sniffer** pintar: Otomatis mencari tahu format asli dari file meski link tidak menampilkan eksistensi filenya!
-   - **4-Jalur Download Bersamaan:** Kecepatan download dimaksimalkan dengan memecah file jadi 4 bagian yang didownload berbarengan!
-
-2. **🎥 YouTube Downloader**
-   Sistem cerdas untuk mendownload video maupun Audio (MP3) dari YouTube secara efisien tanpa tersendat menggunakan *engine* `yt-dlp` tersembunyi.
-   
-3. **🎵 TikTok Downloader**
-   Bypass API TikTok. Video bersih tanpa *watermark* atau langsung ekstrak lagunya (MP3) dengan sekejap.
-
-4. **📸 Instagram Downloader (Multi-Lapis)**
-   Hajar proteksi bot Instagram! Menggunakan Node Scraper langsung, dan jika gagal otomatis mengaktifkan jalur cadangan rahasia via IDM Engine (`yt-dlp`). Tidak ada yang lolos!
-
-5. **📋 Auto-Sniff Clipboard**
-   Copy *link* apapun, aplikasinya akan langsung deteksi dari *Clipboard* Anda secara otomatis. Nggak perlu ribet bolak-balik Paste.
+**IDM KW Super** adalah pengunduh media dan file berperforma tinggi yang dibangun menggunakan Node.js. Aplikasi ini memiliki antarmuka bertema Cyberpunk yang modern dan mesin backend tangguh yang dirancang untuk memberikan kecepatan unduhan multi-threaded layaknya Internet Download Manager (IDM) asli.
 
 ---
 
-## 🛠️ Cara Install & Pakai
+## 🌟 Fitur Utama
 
-### Syarat Sistem
-1. Pastikan Anda sudah menginstal **Node.js**.
-2. Harus menggunakan OS **Windows** karena sistem penentuan folder (*Folder Picker*) menggunakan *PowerShell*.
+### 1. 🚀 Universal Auto-Sniffer (Auto Mode)
+Sistem cerdas yang mampu mendeteksi dan mengunduh hampir semua jenis file dari link langsung:
+- **Media:** `.mp4`, `.png`, `.jpg`, `.mp3`.
+- **Dokumen:** `.pdf`, `.docx`, `.zip`, `.rar`.
+- **Fitur Baru (Eksperimental):** Pendeteksian cerdas untuk file **Aplikasi (`.exe`, `.msi`)** dan **Presentasi (`.ppt`, `.pptx`)**.
 
-### Instalasi
-Buka terminal/CMD di folder ini, lalu jalankan:
-```bash
-npm install
-```
+### 2. 🎥 Integrasi Media Sosial (Engine Khusus)
+- **YouTube:** Ekstraksi Video & Audio (MP3) kualitas tinggi via `yt-dlp`.
+- **TikTok:** Download tanpa watermark dan ekstraksi audio otomatis.
+- **Instagram:** Scraper berlapis untuk menembus proteksi bot Instagram.
 
-### Menjalankan Server
-Ketik perintah ini di terminal:
-```bash
-node main.js
-```
-Jika sukses, terminal akan menampilkan:
-> `🚀 IDM KW ULTIMATE JALAN!`
+### 3. ⚡ Multi-Threaded Engine
+Membagi file menjadi **4 jalur paralel** (chunks) untuk memaksimalkan penggunaan bandwidth dan mempercepat waktu unduh.
 
-Lalu buka browser kesayangan Anda dan pergi ke:
-**[http://localhost:3000](http://localhost:3000)**
+### 4. 📋 Clipboard Monitoring
+Mendeteksi link yang disalin secara otomatis dan memfilternya secara cerdas untuk memudahkan proses unduhan tanpa perlu bolak-balik aplikasi.
 
 ---
 
-## 🖥️ Panduan Antarmuka (UI)
+## 🛠️ Cara Instalasi & Penggunaan
 
-- **Mode Tab:** Pilih mode sesuai target Anda (`Auto`, `YouTube Video/MP3`, `TikTok Video/MP3`, `Instagram`).
-- **Input Link:** Paste link (kalau *Clipboard monitor* gagal mendeteksinya).
-- **Tombol "SEDOT!":** Sekali klik, akan muncul dialog pemilih folder, dan boom! Download berjalan dengan *progress bar* *real-time*.
+### Persyaratan Sistem
+- **Node.js** (Versi 20 ke atas direkomendasikan)
+- **Windows OS** (Diperlukan untuk fitur pemilih folder PowerShell)
+
+### Langkah Instalasi
+1. **Download/Clone** repository ini ke komputer Anda.
+2. Buka folder proyek di Terminal atau CMD.
+3. Jalankan perintah berikut untuk menginstal library yang dibutuhkan:
+   ```bash
+   npm install
+   ```
+4. Setelah instalasi selesai, jalankan aplikasi dengan perintah:
+   ```bash
+   node main.js
+   ```
+5. Buka browser dan akses alamat berikut:
+   **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
-## ⚠️ Peringatan
-- Saat pertama kali mendownload video YouTube atau Instagram, IDM KW akan mengunduh paket `yt-dlp.exe` secara otomatis ke dalam folder aplikasi. Mohon tunggu proses awalnya sebentar (ukuran file sekitar ~18MB).
-- Fitur *Auto Sniff* kadang menunda proses agar Anda punya waktu menentukan "Mode" jika Anda menyalin link YouTube atau TikTok. Tekan *SEDOT* manual dari tombol UI!
+## 📖 Panduan Penggunaan
+1. Pilih **Mode** di UI (Auto, YouTube, TikTok, atau Instagram).
+2. Salin link target. Aplikasi akan mendeteksi secara otomatis atau Anda bisa menempelkan (paste) secara manual.
+3. Klik tombol **"SEDOT!"**.
+4. Pilih folder penyimpanan pada jendela yang muncul.
+5. Pantau progres download pada progress bar Cyberpunk yang interaktif.
 
-> *Diciptakan dengan kecepatan dan brutalitas untuk melawan limitasi bandwidth.* ⚡
+---
+
+## 🔧 Detail Teknis
+- **Backend:** Node.js, Express, Socket.IO, Axios.
+- **Frontend:** HTML5, CSS3 (Cyberpunk-Glassmorphism), JavaScript.
+- **Engine Tambahan:** `yt-dlp.exe` (Akan diunduh otomatis saat pertama kali digunakan).
+
+---
+
+## 📝 Catatan Pengembangan
+- Saat ini pendeteksian otomatis untuk file `.exe` dan `.pptx` sedang dalam tahap optimalisasi untuk memastikan akurasi ekstensi file pada berbagai jenis server.
+- Pastikan koneksi internet stabil saat inisialisasi awal (unduh engine `yt-dlp`).
+
+---
+
+> *Dibuat untuk kecepatan. Dikendalikan dengan brutal.* ⚡
