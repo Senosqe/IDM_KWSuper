@@ -1,0 +1,21 @@
+{
+  "name": "idm_kw",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
+    "axios": "^1.16.0",
+    "cli-progress": "^3.12.0",
+    "express": "^5.2.1",
+    "instagram-url-direct": "^2.0.7",
+    "socket.io": "^4.8.3"
+  }
+}
