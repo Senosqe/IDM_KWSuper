@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "build": "electron-builder --win"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +18,20 @@
     "express": "^5.2.1",
     "instagram-url-direct": "^2.0.7",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "electron": "^42.2.0",
+    "electron-builder": "^26.8.1",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "com.idmkw.ultimate",
+    "productName": "IDM KW Ultimate",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "dist"
+    }
   }
 }

@@ -1,3 +1,4 @@
+const { app: electronApp, BrowserWindow } = require('electron');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -36,7 +37,7 @@ function cekClipboard() {
 
 // --- ENGINE DOWNLOAD ---
 
-async function fastDownload(fileUrl, finalPath) {
+async function fastDownload(fileUrl, finalPath, emitDone = true) {
     try {
         let totalBytes = 0;
         const headRes = await axios.head(fileUrl, { timeout: 10000 }).catch(() => null);
@@ -63,7 +64,7 @@ async function fastDownload(fileUrl, finalPath) {
             });
             res.data.pipe(writer);
             await new Promise(r => writer.on('finish', r));
-            io.emit('done');
+            if (emitDone) io.emit('done');
             return;
         }
 
@@ -94,20 +95,20 @@ async function fastDownload(fileUrl, finalPath) {
             fs.unlinkSync(`${finalPath}.part${i}`);
         }
         writeStream.end();
-        io.emit('done');
+        if (emitDone) io.emit('done');
     } catch (e) {
         io.emit('status', { msg: "Gagal IDM Engine: " + e.message });
     }
 }
 
 async function handleSpecialDownload(url, saveDir) {
-    // A. JALUR YOUTUBE
-    if (ytdl.validateURL(url) || url.includes('youtube.com') || url.includes('youtu.be')) {
-        io.emit('status', { msg: "Ngebongkar YouTube pakai Engine Khusus..." });
+    // A. JALUR YT-DLP (YOUTUBE, TWITTER/X, FACEBOOK)
+    if (ytdl.validateURL(url) || url.includes('youtube.com') || url.includes('youtu.be') || url.includes('twitter.com') || url.includes('x.com') || url.includes('facebook.com') || url.includes('fb.watch') || url.includes('fb.com')) {
+        io.emit('status', { msg: "Ngebongkar link pakai Engine Khusus..." });
         try {
-            const exePath = path.join(__dirname, 'yt-dlp.exe');
+            const exePath = path.join(electronApp.getPath('userData'), 'yt-dlp.exe');
             if (!fs.existsSync(exePath)) {
-                io.emit('status', { msg: "Download engine YouTube (yt-dlp)... Tunggu bentar!" });
+                io.emit('status', { msg: "Download engine khusus (yt-dlp)... Tunggu bentar!" });
                 const res = await axios({ url: "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe", responseType: 'stream' });
                 const writer = fs.createWriteStream(exePath);
                 let down = 0;
@@ -120,7 +121,7 @@ async function handleSpecialDownload(url, saveDir) {
                 await new Promise((resolve) => writer.on('finish', resolve));
             }
 
-            io.emit('status', { msg: "Menganalisa video YouTube..." });
+            io.emit('status', { msg: "Menganalisa media..." });
             let formatArgs;
             if (downloadMode === 'mp3') {
                 formatArgs = ['-f', 'bestaudio', '-o', path.join(saveDir, '%(title)s.mp3'), url];
@@ -128,7 +129,7 @@ async function handleSpecialDownload(url, saveDir) {
                 formatArgs = ['-f', 'best[ext=mp4]/best', '-o', path.join(saveDir, '%(title)s.mp4'), url];
             }
 
-            io.emit('status', { msg: "Menyedot file dari server YouTube..." });
+            io.emit('status', { msg: "Menyedot file dari server..." });
             await new Promise((resolve, reject) => {
                 const child = spawn(exePath, formatArgs);
                 child.stdout.on('data', data => {
@@ -145,7 +146,22 @@ async function handleSpecialDownload(url, saveDir) {
             });
             return true;
         } catch (err) {
-            io.emit('status', { msg: "YouTube Error: " + err.message });
+            // FALLBACK: JIKA GAGAL YT-DLP (Mungkin ini link Foto FB/X)
+            if (url.includes('facebook.com') || url.includes('fb.com') || url.includes('twitter.com') || url.includes('x.com')) {
+                io.emit('status', { msg: "Gagal ambil video. Coba ekstrak foto..." });
+                try {
+                    const pageRes = await axios.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36' } });
+                    const ogMatch = pageRes.data.match(/<meta\s+(?:property|name)="(?:og:image|twitter:image)"\s+content="([^"]+)"/i);
+                    if (ogMatch && ogMatch[1]) {
+                        let photoUrl = ogMatch[1].replace(/&amp;/g, '&');
+                        io.emit('status', { msg: "Foto ditemukan! Menyedot..." });
+                        const fileName = `Photo_${Date.now()}.jpg`;
+                        await fastDownload(photoUrl, path.join(saveDir, fileName));
+                        return true;
+                    }
+                } catch (e) {}
+            }
+            io.emit('status', { msg: "Engine Error: " + err.message });
             return true; 
         }
     }
@@ -176,7 +192,7 @@ async function handleSpecialDownload(url, saveDir) {
         }
     }
     // C. JALUR INSTAGRAM
-    if (url.includes('instagram.com') || downloadMode === 'ig') {
+    if (url.includes('instagram.com')) {
         io.emit('status', { msg: "Nge-bypass Instagram via Node Scraper & IDM Engine..." });
         try {
             // Coba pakai instagram-url-direct dulu (Bypass anti-bot) dengan Timeout 10 Detik
@@ -193,21 +209,29 @@ async function handleSpecialDownload(url, saveDir) {
             }
 
             if (links.length > 0) {
-                io.emit('status', { msg: "Link direct Instagram berhasil didapat!" });
-                // Ambil link pertama
-                const targetUrl = links[0];
-                const extMatch = targetUrl.match(/\.([a-zA-Z0-9]+)(?:\?|$)/);
-                const ext = extMatch ? `.${extMatch[1]}` : '.mp4';
-                const fileName = `Instagram_${Date.now()}${ext}`;
+                io.emit('status', { msg: `Link direct IG didapat! Total media: ${links.length}` });
                 
-                io.emit('status', { msg: "Menyedot Instagram pakai IDM Engine..." });
-                await fastDownload(targetUrl, path.join(saveDir, fileName));
+                let promises = [];
+                for (let i = 0; i < links.length; i++) {
+                    const targetUrl = links[i];
+                    const extMatch = targetUrl.match(/\.([a-zA-Z0-9]+)(?:\?|$)/);
+                    const ext = extMatch ? `.${extMatch[1]}` : '.mp4';
+                    const fileName = `Instagram_${Date.now()}_Slide${i+1}${ext}`;
+                    
+                    io.emit('status', { msg: `Menyedot media ${i+1} dari ${links.length}...` });
+                    // Matikan emitDone supaya nggak spam 'Selesai' berkali-kali
+                    promises.push(fastDownload(targetUrl, path.join(saveDir, fileName), false));
+                }
+                
+                await Promise.all(promises);
+                io.emit('progress', { percent: 100 });
+                setTimeout(() => io.emit('done'), 500);
                 return true;
             }
 
             // FALLBACK KE YT-DLP JIKA NODE SCRAPER GAGAL
             io.emit('status', { msg: "Node Scraper gagal, beralih ke yt-dlp..." });
-            const exePath = path.join(__dirname, 'yt-dlp.exe');
+            const exePath = path.join(electronApp.getPath('userData'), 'yt-dlp.exe');
             if (!fs.existsSync(exePath)) {
                 io.emit('status', { msg: "Download engine (yt-dlp)... Tunggu bentar!" });
                 const res = await axios({ url: "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe", responseType: 'stream' });
@@ -290,23 +314,24 @@ async function startEngine(url) {
                     if (disp && disp.includes('filename=')) {
                         const matchQuoted = disp.match(/filename="([^"]+)"/);
                         const matchUnquoted = disp.match(/filename=([^;]+)/);
-                        
                         if (matchQuoted && matchQuoted[1]) fileName = matchQuoted[1];
                         else if (matchUnquoted && matchUnquoted[1]) fileName = matchUnquoted[1].trim();
-                    } else {
-                        const cType = headRes.headers['content-type'] || '';
-                        const mimeExt = mime.extension(cType.split(';')[0]);
-                        
-                        if (cType.includes('application/x-msdownload') || cType.includes('application/x-dosexec') || cType.includes('application/vnd.microsoft.portable-executable') || url.toLowerCase().includes('.exe')) ext = '.exe';
-                        else if (mimeExt) ext = '.' + mimeExt;
-                        else if (cType.includes('image/jpeg')) ext = '.jpg';
-                        else if (cType.includes('image/png')) ext = '.png';
-                        else if (cType.includes('video/mp4')) ext = '.mp4';
-                        else if (cType.includes('application/zip')) ext = '.zip';
-                        else if (cType.includes('application/pdf')) ext = '.pdf';
-                        else if (cType.includes('application/x-rar')) ext = '.rar';
-                        else if (cType.includes('application/octet-stream') && url.includes('.exe')) ext = '.exe';
                     }
+
+                    // SNIFF EXTENSION (Always run if fileName doesn't have it yet)
+                    const cType = headRes.headers['content-type'] || '';
+                    const mimeExt = mime.extension(cType.split(';')[0]);
+                    
+                    if (cType.includes('application/x-msdownload') || cType.includes('application/x-dosexec') || cType.includes('application/vnd.microsoft.portable-executable') || cType.includes('application/x-msi') || url.toLowerCase().includes('.exe') || url.toLowerCase().includes('.msi')) ext = '.exe';
+                    else if (cType.includes('application/vnd.ms-powerpoint') || cType.includes('application/vnd.openxmlformats-officedocument.presentationml.presentation')) ext = '.pptx';
+                    else if (mimeExt) ext = '.' + mimeExt;
+                    else if (cType.includes('image/jpeg')) ext = '.jpg';
+                    else if (cType.includes('image/png')) ext = '.png';
+                    else if (cType.includes('video/mp4')) ext = '.mp4';
+                    else if (cType.includes('application/zip')) ext = '.zip';
+                    else if (cType.includes('application/pdf')) ext = '.pdf';
+                    else if (cType.includes('application/x-rar')) ext = '.rar';
+                    else if (cType.includes('application/octet-stream') && url.includes('.exe')) ext = '.exe';
                 }
             } catch(e) {}
 
@@ -351,9 +376,28 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => {
-    console.log("=========================================");
-    console.log("🚀 IDM KW ULTIMATE JALAN!");
-    console.log("Buka di browser: http://localhost:3000");
-    console.log("=========================================");
+let mainWindow;
+electronApp.whenReady().then(() => {
+    mainWindow = new BrowserWindow({
+        width: 1000,
+        height: 700,
+        autoHideMenuBar: true,
+        title: "IDM KW ULTIMATE",
+        webPreferences: {
+            nodeIntegration: false
+        }
+    });
+
+    server.listen(3000, () => {
+        console.log("=========================================");
+        console.log("🚀 IDM KW ULTIMATE JALAN (ELECTRON MODE)!");
+        console.log("=========================================");
+        mainWindow.loadURL('http://localhost:3000');
+    });
+});
+
+electronApp.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        electronApp.quit();
+    }
 });

@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IDM KW ULTIMATE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050505;
-            --surface: #121212;
-            --surface-light: #1e1e1e;
+            --bg-color: #1a1a1a;
+            --surface: #242424;
+            --surface-border: #333333;
             --primary: #FFD700;
             --primary-glow: rgba(255, 215, 0, 0.4);
-            --text: #f3f4f6;
+            --text-main: #f3f4f6;
             --text-dim: #9ca3af;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * {
@@ -24,9 +26,8 @@
 
         body { 
             background-color: var(--bg-color); 
-            background-image: radial-gradient(circle at 50% 0%, var(--surface-light) 0%, var(--bg-color) 70%);
-            color: var(--text); 
-            font-family: 'Poppins', sans-serif; 
+            color: var(--text-main); 
+            font-family: var(--font-main); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -35,46 +36,29 @@
         }
 
         .container { 
-            background: rgba(18, 18, 18, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            padding: 40px; 
-            border-radius: 24px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05); 
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            padding: 40px 45px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
             width: 100%;
-            max-width: 600px; 
+            max-width: 580px; 
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            animation: scanline 2s linear infinite;
-        }
-
-        @keyframes scanline {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
         }
 
         h1 { 
-            color: var(--primary); 
-            font-weight: 800;
-            font-size: 2.2rem;
+            color: var(--text-main); 
+            font-weight: 700;
+            font-size: 2rem;
             letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            text-shadow: 0 0 20px var(--primary-glow);
+            margin-bottom: 6px;
         }
 
         .subtitle {
             color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-bottom: 30px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 35px;
         }
 
         .input-group { 
@@ -90,56 +74,57 @@
 
         input { 
             flex: 1; 
-            padding: 16px 20px; 
-            border-radius: 12px; 
-            border: 1px solid var(--surface-light); 
-            background: rgba(0, 0, 0, 0.5); 
-            color: var(--text); 
-            font-family: 'Poppins', sans-serif;
+            padding: 14px 18px; 
+            border-radius: 10px; 
+            border: 1px solid var(--surface-border); 
+            background: rgba(0,0,0,0.15); 
+            color: var(--text-main); 
+            font-family: var(--font-main);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             outline: none;
+        }
+
+        input::placeholder {
+            color: #6b7280;
         }
 
         input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
+            background: rgba(0,0,0,0.25);
         }
 
         button.hajar { 
-            background: var(--primary); 
+            background: var(--text-main); 
             color: var(--bg-color); 
-            font-weight: 800; 
+            font-weight: 600; 
             font-size: 1rem;
             border: none; 
-            padding: 16px 32px; 
-            border-radius: 12px; 
+            padding: 14px 28px; 
+            border-radius: 10px; 
             cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px var(--primary-glow);
+            transition: all 0.2s ease;
         }
 
         button.hajar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--primary-glow);
-            background: #ffea00;
+            background: var(--primary);
+            transform: translateY(-1px);
         }
 
         button.hajar:active {
-            transform: translateY(1px);
+            transform: translateY(0);
         }
 
+        /* --- Tampilan Lama Mode Selector Sesuai Request --- */
         .mode-selector { 
             display: flex; 
             justify-content: center; 
             gap: 10px; 
-            margin-bottom: 30px; 
+            margin-bottom: 35px; 
             background: rgba(0,0,0,0.3);
             padding: 6px;
             border-radius: 14px;
-            border: 1px solid var(--surface-light);
+            border: 1px solid var(--surface-border);
         }
 
         .mode-btn { 
@@ -150,13 +135,13 @@
             cursor: pointer; 
             background: transparent; 
             color: var(--text-dim); 
-            font-family: 'Poppins', sans-serif;
+            font-family: var(--font-main);
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .mode-btn:hover {
-            color: var(--text);
+            color: var(--text-main);
             background: rgba(255, 255, 255, 0.05);
         }
 
@@ -165,21 +150,23 @@
             color: var(--bg-color); 
             box-shadow: 0 4px 15px var(--primary-glow);
         }
+        /* --------------------------------------------------- */
 
         .status-box { 
             text-align: left; 
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid var(--surface-light);
-            padding: 20px; 
-            border-radius: 16px; 
-            font-family: 'JetBrains Mono', monospace; 
+            background: rgba(0, 0, 0, 0.2); 
+            border: 1px solid var(--surface-border);
+            padding: 18px 20px; 
+            border-radius: 12px; 
+            font-family: var(--font-mono); 
             font-size: 0.85rem; 
             margin-bottom: 25px;
             color: #d1d5db;
         }
 
         .status-box div {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            line-height: 1.5;
         }
         .status-box div:last-child {
             margin-bottom: 0;
@@ -187,51 +174,34 @@
 
         .status-box strong {
             color: var(--primary);
-            margin-right: 5px;
+            margin-right: 6px;
+            font-weight: normal;
         }
 
         .progress-container { 
             width: 100%; 
-            background-color: rgba(0, 0, 0, 0.5); 
-            border-radius: 100px; 
+            background-color: rgba(0,0,0,0.3); 
+            border-radius: 8px; 
             overflow: hidden; 
-            height: 12px; 
-            border: 1px solid var(--surface-light);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-            position: relative;
+            height: 6px; 
+            border: 1px solid var(--surface-border);
         }
 
         .progress-bar { 
             width: 0%; 
             height: 100%; 
-            background: linear-gradient(90deg, #d4af37, var(--primary)); 
-            border-radius: 100px;
+            background: var(--primary); 
+            border-radius: 8px;
             transition: width 0.3s ease;
-            box-shadow: 0 0 10px var(--primary-glow);
-            position: relative;
-        }
-
-        .progress-bar::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
         }
 
         #percent-text { 
-            font-weight: 800; 
+            font-weight: 600; 
             margin-top: 15px; 
             display: inline-block; 
-            color: var(--primary); 
-            font-size: 1.5rem; 
-            text-shadow: 0 0 15px var(--primary-glow);
-            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-main); 
+            font-size: 1.25rem; 
+            font-family: var(--font-mono);
         }
     </style>
 </head>
@@ -250,7 +220,6 @@
             <button class="mode-btn active" id="btn-auto" onclick="setMode('auto')">Auto Mode</button>
             <button class="mode-btn" id="btn-video" onclick="setMode('video')">Video (MP4)</button>
             <button class="mode-btn" id="btn-mp3" onclick="setMode('mp3')">Music (MP3)</button>
-            <button class="mode-btn" id="btn-ig" onclick="setMode('ig')">Instagram</button>
         </div>
 
         <div class="status-box">
@@ -319,7 +288,7 @@
             // Success animation
             document.getElementById('percent-text').style.color = '#4ade80';
             setTimeout(() => {
-                document.getElementById('percent-text').style.color = 'var(--primary)';
+                document.getElementById('percent-text').style.color = 'var(--text-main)';
             }, 2000);
         });
     </script>

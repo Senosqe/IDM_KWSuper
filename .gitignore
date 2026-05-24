@@ -1,3 +1,5 @@
 node_modules/
 yt-dlp.exe
 .env
+dist/
+IDM_KW_Backup/
